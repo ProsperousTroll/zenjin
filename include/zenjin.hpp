@@ -2,6 +2,7 @@
 #include <iostream>
 #include "config.hpp"
 #include "raylib.h"
+#include <unordered_map>
 
 namespace States {
    class EmptyState{
@@ -120,24 +121,40 @@ namespace Entity {
    class Player : public Object {
       public:
          Player(){
-            bounds.x = 64;
-            bounds.y = 128;
-            pos.x = WINWIDTH / 2 - bounds.x;
-            pos.y = WINHEIGHT / 2 - bounds.y;
+            bounds.width = 64;
+            bounds.height = 128;
+            pos.x = WINWIDTH / 2 - bounds.width / 2;
+            pos.y = WINHEIGHT / 2 - bounds.height / 2;
          }
+
          Vector2 vel;
+         int inputDir{0};
+         float maxSpeed{10};
+         float accel{0.15};
+         float friction{0.3};
 
          void move();
-
+         bool isOnFloor();
          void update() override;
+         void draw() override;
+   };
+
+   class Floor : public Object {
+      public:
+         Vector2 size{1000, 50};
+         Floor(){
+            pos.x = WINWIDTH / 2 - size.x / 2;
+            pos.y = WINHEIGHT - size.y;
+            bounds = {pos.x, pos.y, size.x, size.y};
+         }
+
          void draw() override;
    };
 }
 
-/*
-inline std::unordered_map<Entity::Tag, Entity::Object> World{
- {Entity::PLAYER, Entity::Player()},
+// Map of every game object, sorted by tag.
+
+inline std::unordered_map<Entity::Tag, Entity::Object*> World{
+   {Entity::PLAYER, new Entity::Player()},
+   {Entity::WORLD, new Entity::Floor()}
 };
-*/
-
-

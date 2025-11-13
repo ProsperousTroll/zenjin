@@ -19,9 +19,17 @@ void States::MainGame::update(){
    if(IsKeyPressed(KEY_SPACE)){
       States::Manager::initManager()->setState(&title);
    }
+
+   for (auto& ent: World){
+      ent.second->update();
+   }
 }
 
 void States::MainGame::draw(){
    ClearBackground(GRAY);
    DrawFPS(WINWIDTH / 36, WINHEIGHT / 36);
+
+   for (auto& ent : World){
+      ent.second->draw();
+   }
 }

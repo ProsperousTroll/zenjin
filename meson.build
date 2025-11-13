@@ -11,7 +11,7 @@ rl = dependency('raylib')
 
 executable(
   'zenjin',
-  ['src/main.cpp', 'src/states.cpp'], # source files go here
+  ['src/main.cpp', 'src/states.cpp', 'src/entity.cpp'], # source files go here
   include_directories: inc,
   dependencies: [rl] # dependencies go here
 )
