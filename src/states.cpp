@@ -2,7 +2,6 @@
 #include "config.hpp"
 #include <raylib.h>
 
-
 void States::TitleScreen::update(){
    if(IsKeyPressed(KEY_SPACE)){
       States::Manager::initManager()->setState(&game);

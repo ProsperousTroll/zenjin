@@ -2,7 +2,7 @@
 #include <iostream>
 #include "config.hpp"
 #include "raylib.h"
-#include <unordered_map>
+#include <map>
 
 namespace States {
    class EmptyState{
@@ -96,13 +96,26 @@ namespace Zenjin{
 
 namespace Entity {
    // tag enum for different object types.
-   enum Tag {
+   enum T {
       PLAYER, // a player controller
       NPC, // any kind of enemy, friend, or hostile
       OBJECT, // an interactable part of the world
       ITEM, // something that can be equipped
       WORLD, // world geometry and such
       UI, // what do you think?
+   };
+
+   class Tag {
+      public:
+         inline static int entCount{-1};
+         int tag;
+         T entType;
+
+         Tag(T t){
+            ++entCount;
+            entType = t;
+            tag = entCount;
+         }
    };
 
    // blank template for all game objects and entities.
@@ -142,6 +155,13 @@ namespace Entity {
    class Floor : public Object {
       public:
          Vector2 size{1000, 50};
+         
+         Floor(int x, int y, int w, int h){
+            pos.x = x;
+            pos.y = y;
+            bounds = {pos.x, pos.y, (float)w, (float)h};
+         }
+
          Floor(){
             pos.x = WINWIDTH / 2 - size.x / 2;
             pos.y = WINHEIGHT - size.y;
@@ -153,8 +173,7 @@ namespace Entity {
 }
 
 // Map of every game object, sorted by tag.
-
-inline std::unordered_map<Entity::Tag, Entity::Object*> World{
-   {Entity::PLAYER, new Entity::Player()},
-   {Entity::WORLD, new Entity::Floor()}
+inline std::map<Entity::Tag*, Entity::Object*> World{
+   {new Entity::Tag(Entity::PLAYER), new Entity::Player()},
+   {new Entity::Tag(Entity::WORLD), new Entity::Floor()},
 };
