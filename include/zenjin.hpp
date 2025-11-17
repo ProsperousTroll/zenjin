@@ -2,7 +2,7 @@
 #include <iostream>
 #include "config.hpp"
 #include "raylib.h"
-#include <map>
+// #include <map>
 
 namespace States {
    class EmptyState{
@@ -51,51 +51,10 @@ namespace States {
 inline States::TitleScreen title;
 inline States::MainGame game;
 
-namespace Zenjin{
-   inline void Log(const char* input){
-      std::cout << input << '\n';
-   }
 
-   struct Window {
-      int width;
-      int height;
-      char* name;
-
-      Window(){
-         width = WINWIDTH;
-         height = WINHEIGHT;
-         name = WINNAME;
-      }
-   };
-
-   class Game {
-         Window win;
-         inline static States::Manager* stateManager{States::Manager::initManager()};
-
-      public:
-         Game(){
-            // set title screen as first state
-            stateManager->setState(&title); 
-         }
-
-         void run(){
-            InitWindow(win.width, win.height, win.name);
-            SetTargetFPS(TARGETFPS);
-            stateManager->currentState->init();
-            while(!WindowShouldClose()){
-               stateManager->currentState->update();
-               BeginDrawing();
-               stateManager->currentState->draw();
-               EndDrawing();
-            }
-            stateManager->currentState->unload();
-            CloseWindow();
-         }
-   };
-}
 
 namespace Entity {
-   // tag enum for different object types.
+   // tag class for different object types.
    enum T {
       PLAYER, // a player controller
       NPC, // any kind of enemy, friend, or hostile
@@ -170,10 +129,88 @@ namespace Entity {
 
          void draw() override;
    };
+
+   // master world class, contains all stack allocated objects
+   class World {
+      public:
+         Player plr;
+         Camera2D cam;
+         Floor flr;
+
+         World(){
+            cam.zoom = 1.0f;
+            cam.target = {WINWIDTH / 2, WINHEIGHT / 2};
+            cam.offset = {WINWIDTH / 2, WINHEIGHT / 2};
+         }
+         void init(){};
+         
+         void update(){
+            flr.update();
+            plr.update();
+         };
+         void draw(){
+            flr.draw();
+            plr.draw();
+         }
+
+         void unload(){}
+   };
 }
 
-// Map of every game object, sorted by tag.
+inline Entity::World world;
+// don't do this
+/*
 inline std::map<Entity::Tag*, Entity::Object*> World{
    {new Entity::Tag(Entity::PLAYER), new Entity::Player()},
    {new Entity::Tag(Entity::WORLD), new Entity::Floor()},
 };
+*/
+
+namespace Zenjin{
+   inline void Log(const char* input){
+      std::cout << input << '\n';
+   }
+
+   struct Window {
+      int width;
+      int height;
+      char* name;
+
+      Window(){
+         width = WINWIDTH;
+         height = WINHEIGHT;
+         name = WINNAME;
+      }
+   };
+
+   class Game {
+         Window win;
+         inline static States::Manager* stateManager{States::Manager::initManager()};
+
+      public:
+         Game(){
+            // set title screen as first state
+            stateManager->setState(&title); 
+         }
+
+         void run(){
+            InitWindow(win.width, win.height, win.name);
+            SetTargetFPS(TARGETFPS);
+            stateManager->currentState->init();
+            while(!WindowShouldClose()){
+               stateManager->currentState->update();
+               BeginDrawing();
+               BeginMode2D(world.cam);
+               stateManager->currentState->draw();
+               EndMode2D();
+               // draw FPS if you want i don't care.
+               #ifdef DRAWFPS
+               DrawFPS(WINWIDTH / 36, WINHEIGHT / 36);
+               #endif
+               EndDrawing();
+            }
+            stateManager->currentState->unload();
+            CloseWindow();
+         }
+   };
+}

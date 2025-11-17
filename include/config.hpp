@@ -6,3 +6,5 @@
 #define WINHEIGHT 720
 #define WINNAME "Zenjin"
 #define TARGETFPS 60
+
+#define DRAWFPS

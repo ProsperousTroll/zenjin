@@ -19,16 +19,12 @@ void States::MainGame::update(){
       States::Manager::initManager()->setState(&title);
    }
 
-   for (auto& ent: World){
-      ent.second->update();
-   }
+   world.update();
 }
 
 void States::MainGame::draw(){
    ClearBackground(GRAY);
-   DrawFPS(WINWIDTH / 36, WINHEIGHT / 36);
+   // DrawFPS(WINWIDTH / 36, WINHEIGHT / 36);
 
-   for (auto& ent : World){
-      ent.second->draw();
-   }
+   world.draw();
 }
