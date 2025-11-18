@@ -102,7 +102,7 @@ namespace Entity {
          Vector2 vel;
          int inputDir{0};
          float maxSpeed{10};
-         float accel{0.15};
+         float accel{0.10};
          float friction{0.3};
 
          void move();
@@ -195,7 +195,10 @@ namespace Zenjin{
 
          void run(){
             InitWindow(win.width, win.height, win.name);
+            // optionally set a target fps
+            #ifdef TARGETFPS
             SetTargetFPS(TARGETFPS);
+            #endif
             stateManager->currentState->init();
             while(!WindowShouldClose()){
                stateManager->currentState->update();
@@ -203,7 +206,7 @@ namespace Zenjin{
                BeginMode2D(world.cam);
                stateManager->currentState->draw();
                EndMode2D();
-               // draw FPS if you want i don't care.
+               // draw FPS to screen independant of camera (if macro defined)
                #ifdef DRAWFPS
                DrawFPS(WINWIDTH / 36, WINHEIGHT / 36);
                #endif

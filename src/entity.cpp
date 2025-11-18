@@ -12,32 +12,16 @@ void Entity::Player::move(){
 }
 
 bool Entity::Player::isOnFloor(){
-   /* this is going to be really inefficient in a world with lots of entities.
-    * todo: make this work good and with unlimited ammount of floor objects
-    */
-
    /*
+    * todo: make this work with unlimited amount of floor objects
+    */
    Vector2 foot{pos.x + 32, bounds.y + 128};
    Vector2 ground;
-
-   for (auto& e : World){
-      if(e.first->entType == WORLD){
-         ground = {foot.x, e.second->pos.y};
-         std::cout << Vector2Angle(foot, ground) << std::endl;
-         if(foot.y >= ground.y){
-            pos.y -= Vector2Distance(foot, ground);
-            return true;
-         }
-         DrawLineV(foot, ground, BLACK);
-      }
-   }
-   */
-   Vector2 foot{pos.x + 32, bounds.y + 128};
-   Vector2 ground{0.0, 720 - 50};
    if(CheckCollisionRecs(bounds, world.flr.bounds)){
+      ground = {foot.x, world.flr.pos.y};
+      pos.y -= Vector2Distance(foot, ground) / 4;
       return true;
    }
-   
    return false;
 }
 
@@ -59,12 +43,22 @@ void Entity::Player::update(){
    // camera follow player
    world.cam.target = Vector2Lerp(world.cam.target, pos, 0.25);
 
+   // clamp speed
+   vel.x = Clamp(vel.x, -maxSpeed, maxSpeed);
+
    // apply velocity
    move();
+
+   // reset player
+   if(IsKeyPressed(KEY_BACKSPACE)){
+      pos.x = WINWIDTH / 2;
+      pos.y = WINHEIGHT / 2;
+      vel.y = 0;
+   }
 }
 
 void Entity::Player::draw(){
-   DrawRectangleRec(bounds, YELLOW);
+   DrawRectangleRec(bounds, RED);
 }
 
 // ------------------------- Floor -------------------------- //
