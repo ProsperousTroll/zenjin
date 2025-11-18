@@ -12,16 +12,16 @@ void Entity::Player::move(){
 }
 
 bool Entity::Player::isOnFloor(){
-   /*
-    * todo: make this work with unlimited amount of floor objects
-    */
    Vector2 foot{pos.x + 32, bounds.y + 128};
    Vector2 ground;
-   if(CheckCollisionRecs(bounds, world.flr.bounds)){
-      ground = {foot.x, world.flr.pos.y};
-      pos.y -= Vector2Distance(foot, ground) / 4;
-      return true;
+   for(auto& f : world.flr){
+      if(CheckCollisionRecs(bounds, f.bounds)){
+         ground = {foot.x, f.pos.y};
+         pos.y -= Vector2Distance(foot, ground) / 4;
+         return true;
+      }
    }
+
    return false;
 }
 
@@ -30,21 +30,22 @@ void Entity::Player::update(){
 
    //input direction and x movement
    if(inputDir != 0){
-      vel.x = Lerp(vel.x, inputDir * maxSpeed, accel);
-   } else vel.x = Lerp(vel.x, 0.0, friction);
+      vel.x = Lerp(vel.x, inputDir * maxSpeed * delta, accel * delta);
+   } else vel.x = Lerp(vel.x, 0.0, friction * delta);
 
    // jumping and gravity
    if(!isOnFloor()){
-      vel.y += 0.6;
+      vel.y += gravity * delta;
    } else if (isOnFloor() && IsKeyPressed(KEY_W)){
-      vel.y = -15;
+      vel.y = jumpPower * delta;
    } else vel.y = 0;
 
    // camera follow player
-   world.cam.target = Vector2Lerp(world.cam.target, pos, 0.25);
+   world.cam.target = Vector2Lerp(world.cam.target, pos, 8 * delta);
 
    // clamp speed
-   vel.x = Clamp(vel.x, -maxSpeed, maxSpeed);
+   vel.x = Clamp(vel.x, -maxSpeed * delta, maxSpeed * delta);
+   vel.y = Clamp(vel.y, -fallSpeed * delta, fallSpeed * delta);
 
    // apply velocity
    move();
@@ -58,7 +59,7 @@ void Entity::Player::update(){
 }
 
 void Entity::Player::draw(){
-   DrawRectangleRec(bounds, RED);
+   DrawRectangleRec(bounds, YELLOW);
 }
 
 // ------------------------- Floor -------------------------- //

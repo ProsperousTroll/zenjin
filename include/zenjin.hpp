@@ -1,8 +1,8 @@
 #pragma once
 #include <iostream>
+#include <vector>
 #include "config.hpp"
 #include "raylib.h"
-// #include <map>
 
 namespace States {
    class EmptyState{
@@ -95,15 +95,18 @@ namespace Entity {
          Player(){
             bounds.width = 64;
             bounds.height = 128;
-            pos.x = WINWIDTH / 2 - bounds.width / 2;
-            pos.y = WINHEIGHT / 2 - bounds.height / 2;
+            pos.x = (float)WINWIDTH / 2 - bounds.width / 2;
+            pos.y = (float)WINHEIGHT / 2 - bounds.height / 2;
          }
 
          Vector2 vel;
          int inputDir{0};
-         float maxSpeed{10};
-         float accel{0.10};
-         float friction{0.3};
+         float maxSpeed{800};
+         float accel{10};
+         float friction{15};
+         float jumpPower{-2000};
+         float fallSpeed{1200};
+         float gravity{20};
 
          void move();
          bool isOnFloor();
@@ -122,8 +125,8 @@ namespace Entity {
          }
 
          Floor(){
-            pos.x = WINWIDTH / 2 - size.x / 2;
-            pos.y = WINHEIGHT - size.y;
+            pos.x = (float)WINWIDTH / 2 - size.x / 2;
+            pos.y = (float)WINHEIGHT - size.y;
             bounds = {pos.x, pos.y, size.x, size.y};
          }
 
@@ -135,21 +138,40 @@ namespace Entity {
       public:
          Player plr;
          Camera2D cam;
-         Floor flr;
+         std::vector<Floor> flr;
 
          World(){
-            cam.zoom = 1.0f;
-            cam.target = {WINWIDTH / 2, WINHEIGHT / 2};
-            cam.offset = {WINWIDTH / 2, WINHEIGHT / 2};
+            init();
          }
-         void init(){};
+
+         void init(){
+            cam.zoom = 1.0f;
+            cam.target = {(float)WINWIDTH / 2, (float)WINHEIGHT / 2};
+            cam.offset = {(float)WINWIDTH / 2, (float)WINHEIGHT / 2};
+            for(int i{0}; i != 1500; ++i){
+               flr.emplace_back((i*100)+50, 600, 100, 100);
+            }
+
+            for(int i{0}; i != 5; ++i){
+               flr.emplace_back(i*50+50, 300, 50, 50);
+            }
+
+            for(int i{0}; i != 5; ++i){
+               flr.emplace_back(i*50+650, 300, 50, 50);
+            }
+
+            for(int i{0}; i != 5; ++i){
+               flr.emplace_back(i*50+1250, 300, 50, 50);
+            }
+         }
          
          void update(){
-            flr.update();
             plr.update();
          };
          void draw(){
-            flr.draw();
+            for (auto& f : flr){
+               f.draw();
+            }
             plr.draw();
          }
 
@@ -158,13 +180,7 @@ namespace Entity {
 }
 
 inline Entity::World world;
-// don't do this
-/*
-inline std::map<Entity::Tag*, Entity::Object*> World{
-   {new Entity::Tag(Entity::PLAYER), new Entity::Player()},
-   {new Entity::Tag(Entity::WORLD), new Entity::Floor()},
-};
-*/
+inline double delta;
 
 namespace Zenjin{
    inline void Log(const char* input){
@@ -199,8 +215,14 @@ namespace Zenjin{
             #ifdef TARGETFPS
             SetTargetFPS(TARGETFPS);
             #endif
+            // pseudo-vsync
+            #ifdef VSYNC
+            int vsync{GetMonitorRefreshRate(MONITOR)};
+            SetTargetFPS(vsync);
+            #endif
             stateManager->currentState->init();
             while(!WindowShouldClose()){
+               delta = GetFrameTime();
                stateManager->currentState->update();
                BeginDrawing();
                BeginMode2D(world.cam);
