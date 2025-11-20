@@ -79,7 +79,7 @@ namespace Entity {
          float friction{15};
          float jumpPower{-20};
          float fallSpeed{1800};
-         float gravity{55};
+         float gravity{5500};
 
          void move();
          bool isOnFloor();
