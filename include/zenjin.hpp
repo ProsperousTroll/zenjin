@@ -51,32 +51,7 @@ namespace States {
 inline States::TitleScreen title;
 inline States::MainGame game;
 
-
-
 namespace Entity {
-   // tag class for different object types.
-   enum T {
-      PLAYER, // a player controller
-      NPC, // any kind of enemy, friend, or hostile
-      OBJECT, // an interactable part of the world
-      ITEM, // something that can be equipped
-      WORLD, // world geometry and such
-      UI, // what do you think?
-   };
-
-   class Tag {
-      public:
-         inline static int entCount{-1};
-         int tag;
-         T entType;
-
-         Tag(T t){
-            ++entCount;
-            entType = t;
-            tag = entCount;
-         }
-   };
-
    // blank template for all game objects and entities.
    class Object {
       public:
@@ -93,10 +68,8 @@ namespace Entity {
    class Player : public Object {
       public:
          Player(){
-            bounds.width = 64;
-            bounds.height = 128;
-            pos.x = (float)WINWIDTH / 2 - bounds.width / 2;
-            pos.y = (float)WINHEIGHT / 2 - bounds.height / 2;
+            bounds = {(float)WINWIDTH / 2 - 32, (float)WINHEIGHT / 2 - 64, 64, 128};
+            pos = {bounds.x, bounds.y};
          }
 
          Vector2 vel;
@@ -104,9 +77,9 @@ namespace Entity {
          float maxSpeed{800};
          float accel{10};
          float friction{15};
-         float jumpPower{-2000};
-         float fallSpeed{1200};
-         float gravity{20};
+         float jumpPower{-20};
+         float fallSpeed{1800};
+         float gravity{55};
 
          void move();
          bool isOnFloor();
@@ -119,8 +92,7 @@ namespace Entity {
          Vector2 size{1000, 50};
          
          Floor(int x, int y, int w, int h){
-            pos.x = x;
-            pos.y = y;
+            pos = {(float)x, (float)y};
             bounds = {pos.x, pos.y, (float)w, (float)h};
          }
 
@@ -148,7 +120,7 @@ namespace Entity {
             cam.zoom = 1.0f;
             cam.target = {(float)WINWIDTH / 2, (float)WINHEIGHT / 2};
             cam.offset = {(float)WINWIDTH / 2, (float)WINHEIGHT / 2};
-            for(int i{0}; i != 1500; ++i){
+            for(int i{0}; i != 15; ++i){
                flr.emplace_back((i*100)+50, 600, 100, 100);
             }
 

@@ -4,11 +4,8 @@
 #include "raymath.h"
 
 void Entity::Player::move(){
-   pos.x += vel.x;
-   pos.y += vel.y;
-
-   bounds.x = pos.x;
-   bounds.y = pos.y;
+   pos = Vector2Add(pos, vel);
+   bounds = {pos.x, pos.y, bounds.width, bounds.height};
 }
 
 bool Entity::Player::isOnFloor(){
@@ -21,14 +18,13 @@ bool Entity::Player::isOnFloor(){
          return true;
       }
    }
-
    return false;
 }
 
 void Entity::Player::update(){
-   inputDir = IsKeyDown(KEY_D) - IsKeyDown(KEY_A);
 
    //input direction and x movement
+   inputDir = IsKeyDown(KEY_D) - IsKeyDown(KEY_A);
    if(inputDir != 0){
       vel.x = Lerp(vel.x, inputDir * maxSpeed * delta, accel * delta);
    } else vel.x = Lerp(vel.x, 0.0, friction * delta);
@@ -37,7 +33,7 @@ void Entity::Player::update(){
    if(!isOnFloor()){
       vel.y += gravity * delta;
    } else if (isOnFloor() && IsKeyPressed(KEY_W)){
-      vel.y = jumpPower * delta;
+      vel.y = jumpPower;
    } else vel.y = 0;
 
    // camera follow player
