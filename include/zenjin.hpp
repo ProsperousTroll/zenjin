@@ -74,6 +74,7 @@ namespace Entity {
 
          Vector2 vel;
          int inputDir{0};
+         int wallDir{0};
          float maxSpeed{800};
          float accel{10};
          float friction{15};
@@ -83,6 +84,7 @@ namespace Entity {
 
          void move();
          bool isOnFloor();
+         bool isOnWall();
          void update() override;
          void draw() override;
    };
@@ -125,7 +127,7 @@ namespace Entity {
             }
 
             for(int i{0}; i != 5; ++i){
-               flr.emplace_back(i*50+50, 300, 50, 50);
+               flr.emplace_back(i*50+50, 300, 50, 300);
             }
 
             for(int i{0}; i != 5; ++i){
@@ -133,7 +135,7 @@ namespace Entity {
             }
 
             for(int i{0}; i != 5; ++i){
-               flr.emplace_back(i*50+1250, 300, 50, 50);
+               flr.emplace_back(i*50+1250, 300, 50, 300);
             }
          }
          
