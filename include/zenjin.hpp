@@ -89,16 +89,16 @@ namespace Entity {
          void draw() override;
    };
 
-   class Floor : public Object {
+   class Tile : public Object {
       public:
-         Vector2 size{1000, 50};
+         Vector2 size{64, 64};
          
-         Floor(int x, int y, int w, int h){
+         Tile(int x, int y, int w, int h){
             pos = {(float)x, (float)y};
             bounds = {pos.x, pos.y, (float)w, (float)h};
          }
 
-         Floor(){
+         Tile(){
             pos.x = (float)WINWIDTH / 2 - size.x / 2;
             pos.y = (float)WINHEIGHT - size.y;
             bounds = {pos.x, pos.y, size.x, size.y};
@@ -112,7 +112,9 @@ namespace Entity {
       public:
          Player plr;
          Camera2D cam;
-         std::vector<Floor> flr;
+         // will be gone soon
+         std::vector<Tile> tileMap;
+         Tile tileM[25][25];
 
          World(){
             init();
@@ -122,20 +124,14 @@ namespace Entity {
             cam.zoom = 1.0f;
             cam.target = {(float)WINWIDTH / 2, (float)WINHEIGHT / 2};
             cam.offset = {(float)WINWIDTH / 2, (float)WINHEIGHT / 2};
+            /*
             for(int i{0}; i != 15; ++i){
-               flr.emplace_back((i*100)+50, 600, 100, 100);
+               tileMap.emplace_back((i*100)+50, 600, 100, 100);
             }
-
-            for(int i{0}; i != 5; ++i){
-               flr.emplace_back(i*50+50, 300, 50, 300);
-            }
-
-            for(int i{0}; i != 5; ++i){
-               flr.emplace_back(i*50+650, 300, 50, 50);
-            }
-
-            for(int i{0}; i != 5; ++i){
-               flr.emplace_back(i*50+1250, 300, 50, 300);
+            */
+            for(int i{0}; i != 25; ++i){
+               tileM[i][0].bounds.x = i * 64;
+               tileM[0][i].bounds.y = i * 64;
             }
          }
          
@@ -143,8 +139,8 @@ namespace Entity {
             plr.update();
          };
          void draw(){
-            for (auto& f : flr){
-               f.draw();
+            for (auto& tile : tileM){
+               tile->draw();
             }
             plr.draw();
          }
