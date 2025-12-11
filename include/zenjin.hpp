@@ -56,7 +56,6 @@ namespace Entity {
    // blank template for all game objects and entities.
    class Object {
       public:
-         Vector2 pos;
          Rectangle bounds;
          Texture2D sprite;
 
@@ -72,7 +71,7 @@ namespace Entity {
       public:
          Player(){
             bounds = {(float)WINWIDTH / 2 - 32, (float)WINHEIGHT / 2 - 64, 64, 128};
-            pos = {bounds.x, bounds.y};
+            //pos = {bounds.x, bounds.y};
          }
 
          Vector2 vel;
@@ -100,11 +99,12 @@ namespace Entity {
    class Tile : public Object {
       public:
          inline static int count{0};
-         int size, tag;
+         int size{64};
+         int tag;
          TileType type;
 
          Tile(){
-            size = 64;
+            bounds.width = size; bounds.height = size;
             this->tag = count;
             this->type = AIR;
             ++count;
@@ -118,9 +118,8 @@ namespace Entity {
 
             int i{0}, j{0};
             for(auto& tile : map){
-               tile.pos.x = i * tile.size;
-               tile.pos.y = j * tile.size;
-               tile.bounds = {tile.pos.x, tile.pos.y, (float)tile.size, (float)tile.size};
+               tile.bounds.x = i * tile.size;
+               tile.bounds.y = j * tile.size;
                if(++i >= std::sqrt(Tile::count)){
                   i = 0;
                   ++j;

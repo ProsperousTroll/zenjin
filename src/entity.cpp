@@ -4,8 +4,10 @@
 #include "raymath.h"
 
 void Entity::Player::move(){
-   pos = Vector2Add(pos, Vector2Scale(vel, delta));
-   bounds = {pos.x, pos.y, bounds.width, bounds.height};
+   //pos = Vector2Add(pos, Vector2Scale(vel, delta));
+   //bounds = {pos.x, pos.y, bounds.width, bounds.height};
+   bounds.x += vel.x * delta;
+   bounds.y += vel.y * delta;
 }
 
 bool Entity::Player::isOnWall(){
@@ -29,8 +31,8 @@ bool Entity::Player::isOnWall(){
 bool Entity::Player::isOnFloor(){
    for(auto& tile : world.tileMap){
       if(CheckCollisionRecs(bounds, tile.bounds) && tile.type == GROUND){
-         pos.y -= Vector2Distance({pos.x + 32, bounds.y + 128}, {pos.x + 32, tile.pos.y}) / 4;
-         return (pos.x + bounds.y / 2 >= tile.bounds.x) && (pos.x + bounds.y / 2 <= tile.bounds.x + tile.bounds.y);
+         bounds.y -= Vector2Distance({bounds.x + 32, bounds.y + 128}, {bounds.x + 32, tile.bounds.y}) / 4;
+         return (bounds.x + bounds.y / 2 >= tile.bounds.x) && (bounds.x + bounds.y / 2 <= tile.bounds.x + tile.bounds.y);
       }
    }
    return false;
@@ -66,7 +68,7 @@ void Entity::Player::update(){
 
 
    // camera follow player
-   world.cam.target = Vector2Lerp(world.cam.target, pos, 8 * delta);
+   world.cam.target = Vector2Lerp(world.cam.target, {bounds.x, bounds.y}, 8 * delta);
 
    // clamp speed
    vel.x = Clamp(vel.x, -maxSpeed, maxSpeed);
@@ -77,8 +79,8 @@ void Entity::Player::update(){
 
    // reset player
    if(IsKeyPressed(KEY_BACKSPACE)){
-      pos.x = WINWIDTH / 2;
-      pos.y = WINHEIGHT / 2;
+      bounds.x = WINWIDTH / 2;
+      bounds.y = WINHEIGHT / 2;
       vel.y = 0;
    }
 }
