@@ -1,4 +1,5 @@
 #pragma once
+#include <cmath>
 #include <iostream>
 #include <vector>
 #include "config.hpp"
@@ -65,6 +66,8 @@ namespace Entity {
          virtual void unload(){}
    };
 
+   class Tile;
+
    class Player : public Object {
       public:
          Player(){
@@ -89,19 +92,41 @@ namespace Entity {
          void draw() override;
    };
 
+   enum TileType {
+      GROUND,
+      AIR,
+   };
+
    class Tile : public Object {
       public:
-         Vector2 size{64, 64};
-         
-         Tile(int x, int y, int w, int h){
-            pos = {(float)x, (float)y};
-            bounds = {pos.x, pos.y, (float)w, (float)h};
-         }
+         inline static int count{0};
+         int size, tag;
+         TileType type;
 
          Tile(){
-            pos.x = (float)WINWIDTH / 2 - size.x / 2;
-            pos.y = (float)WINHEIGHT - size.y;
-            bounds = {pos.x, pos.y, size.x, size.y};
+            size = 64;
+            this->tag = count;
+            this->type = AIR;
+            ++count;
+         }
+
+         static std::vector<Tile> createMap(int tileCount){
+            std::vector<Tile> map;
+            for(int i{0}; i < tileCount; ++i){
+               map.emplace_back();
+            }
+
+            int i{0}, j{0};
+            for(auto& tile : map){
+               tile.pos.x = i * tile.size;
+               tile.pos.y = j * tile.size;
+               tile.bounds = {tile.pos.x, tile.pos.y, (float)tile.size, (float)tile.size};
+               if(++i >= std::sqrt(Tile::count)){
+                  i = 0;
+                  ++j;
+               }
+            }
+            return map;
          }
 
          void draw() override;
@@ -112,9 +137,7 @@ namespace Entity {
       public:
          Player plr;
          Camera2D cam;
-         // will be gone soon
-         std::vector<Tile> tileMap;
-         Tile tileM[25][25];
+         std::vector<Tile> tileMap = Tile::createMap(225);
 
          World(){
             init();
@@ -124,24 +147,23 @@ namespace Entity {
             cam.zoom = 1.0f;
             cam.target = {(float)WINWIDTH / 2, (float)WINHEIGHT / 2};
             cam.offset = {(float)WINWIDTH / 2, (float)WINHEIGHT / 2};
-            /*
-            for(int i{0}; i != 15; ++i){
-               tileMap.emplace_back((i*100)+50, 600, 100, 100);
-            }
-            */
-            for(int i{0}; i != 25; ++i){
-               tileM[i][0].bounds.x = i * 64;
-               tileM[0][i].bounds.y = i * 64;
+
+            int i{209};
+            while(i < 224){
+               ++i;
+               tileMap[i].type = GROUND;
             }
          }
          
          void update(){
             plr.update();
          };
+
          void draw(){
-            for (auto& tile : tileM){
-               tile->draw();
+            for (auto& tile : tileMap){
+               tile.draw();
             }
+
             plr.draw();
          }
 

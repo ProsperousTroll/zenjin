@@ -27,26 +27,8 @@ bool Entity::Player::isOnWall(){
 }
 
 bool Entity::Player::isOnFloor(){
-   // this method is kinda just turning into a general collision check
-   /*
-   Vector2 foot{pos.x + 32, bounds.y + 128};
-   Vector2 ground;
-   for(auto& f : world.flr){
-      ground = {foot.x, f.pos.y};
-      if(CheckCollisionRecs(bounds, f.bounds)){
-         if(vel.y < 0){
-            vel.y *= -1;
-            return false;
-         }
-         if(vel.y >= 0){
-            pos.y -= Vector2Distance(foot, ground) / 4;
-            return true;
-         }
-      }
-   }
-   */
    for(auto& tile : world.tileMap){
-      if(CheckCollisionRecs(bounds, tile.bounds)){
+      if(CheckCollisionRecs(bounds, tile.bounds) && tile.type == GROUND){
          pos.y -= Vector2Distance({pos.x + 32, bounds.y + 128}, {pos.x + 32, tile.pos.y}) / 4;
          return (pos.x + bounds.y / 2 >= tile.bounds.x) && (pos.x + bounds.y / 2 <= tile.bounds.x + tile.bounds.y);
       }
@@ -55,37 +37,32 @@ bool Entity::Player::isOnFloor(){
 }
 
 void Entity::Player::update(){
-   std::cout << wallDir << '\n';
+   //std::cout << wallDir << '\n';
 
    //input direction and x movement
    // actually wtf gross
    inputDir = IsKeyDown(KEY_D) - IsKeyDown(KEY_A);
-   if(!isOnWall()){
-      wallDir = 0;
-      if(inputDir != 0){
+   if(inputDir != 0){
          vel.x = Lerp(vel.x, inputDir * maxSpeed, accel * delta);
-      } else vel.x = Lerp(vel.x, 0.0f, friction * delta);
-   } else if (wallDir == 1 && IsKeyDown(KEY_A)){
-      vel.x = -maxSpeed;
-   } else if (wallDir == -1 && IsKeyDown(KEY_D)){
-      vel.x = maxSpeed;
-   }
+   } else vel.x = Lerp(vel.x, 0.0f, friction * delta);
 
    
-   // jumping and gravity
+   /*
+    * For debugging, essentially noclip.
+    *
    if(IsKeyDown(KEY_W)){
       vel.y = -400;
    } else if (IsKeyDown(KEY_S)){
       vel.y = 400;
    } else vel.y = 0;
-   isOnFloor();
-   /*
+   */
+
+   // jumping and gravity
    if(!isOnFloor()){
       vel.y += gravity * delta;
    } else if (isOnFloor() && IsKeyDown(KEY_W)){
       vel.y = jumpPower * 75;
    } else vel.y = 0;
-   */
 
 
    // camera follow player
@@ -113,5 +90,10 @@ void Entity::Player::draw(){
 // ------------------------- Floor -------------------------- //
 
 void Entity::Tile::draw(){
-   DrawRectangleRec(bounds, BLUE);
+   switch(type){
+      default:
+         DrawRectangleRec(bounds, SKYBLUE); break;
+      case GROUND:
+         DrawRectangleRec(bounds, DARKGREEN); break;
+   }
 }
