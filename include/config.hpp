@@ -3,8 +3,7 @@
 /// CONFIG ///
 
 // Window / Display settings
-#define WINWIDTH 1280
-#define WINHEIGHT 720 
+#define RESOLUTION 720 
 #define WINNAME "Zenjin"
 #define TARGETFPS 60 /* Optionally define a custom target frame rate, comment out to disable */
 //#define VSYNC /* Enable a pseudo-vsync that sets the taget FPS of the game to your main monitors refresh rate, comment out to disable */

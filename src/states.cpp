@@ -10,7 +10,7 @@ void States::TitleScreen::update(){
 
 void States::TitleScreen::draw(){
    ClearBackground(YELLOW);
-   DrawText("WELCOME TO GAME", WINWIDTH / 2, WINHEIGHT / 2, 32, BLACK);
+   DrawText("WELCOME TO GAME", getResolution().x / 2, getResolution().y / 2, 32, BLACK);
 }
 
 // MAIN GAME

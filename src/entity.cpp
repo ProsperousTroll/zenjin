@@ -79,8 +79,8 @@ void Entity::Player::update(){
 
    // reset player
    if(IsKeyPressed(KEY_BACKSPACE)){
-      bounds.x = WINWIDTH / 2;
-      bounds.y = WINHEIGHT / 2;
+      bounds.x = getResolution().x / 2;
+      bounds.y = getResolution().y / 2;
       vel.y = 0;
    }
 }

@@ -5,6 +5,9 @@
 #include "config.hpp"
 #include "raylib.h"
 
+// Just one little helper... get X and Y window size from config
+inline Vector2 getResolution(){ return {RESOLUTION * 16/9, RESOLUTION}; }
+
 namespace States {
    class EmptyState{
       public:
@@ -70,7 +73,7 @@ namespace Entity {
    class Player : public Object {
       public:
          Player(){
-            bounds = {(float)WINWIDTH / 2 - 32, (float)WINHEIGHT / 2 - 64, 64, 128};
+            bounds = {getResolution().x / 2 - 32, getResolution().y / 2 - 64, 64, 128};
             //pos = {bounds.x, bounds.y};
          }
 
@@ -144,8 +147,8 @@ namespace Entity {
 
          void init(){
             cam.zoom = 1.0f;
-            cam.target = {(float)WINWIDTH / 2, (float)WINHEIGHT / 2};
-            cam.offset = {(float)WINWIDTH / 2, (float)WINHEIGHT / 2};
+            cam.target = {getResolution().x / 2, getResolution().y / 2};
+            cam.offset = {getResolution().x / 2, getResolution().y / 2};
 
             int i{209};
             while(i < 224){
@@ -178,20 +181,9 @@ namespace Zenjin{
       std::cout << input << '\n';
    }
 
-   struct Window {
-      int width;
-      int height;
-      char* name;
 
-      Window(){
-         width = WINWIDTH;
-         height = WINHEIGHT;
-         name = WINNAME;
-      }
-   };
 
    class Game {
-         Window win;
          inline static States::Manager* stateManager{States::Manager::initManager()};
 
       public:
@@ -201,7 +193,7 @@ namespace Zenjin{
          }
 
          void run(){
-            InitWindow(win.width, win.height, win.name);
+            InitWindow(getResolution().x, getResolution().y, WINNAME);
             // optionally set a target fps
             #ifdef TARGETFPS
             SetTargetFPS(TARGETFPS);
@@ -221,7 +213,7 @@ namespace Zenjin{
                EndMode2D();
                // draw FPS to screen independant of camera (if macro defined)
                #ifdef DRAWFPS
-               DrawFPS(WINWIDTH / 36, WINHEIGHT / 36);
+               DrawFPS(getResolution().x / 36, getResolution().y / 36);
                #endif
                EndDrawing();
             }
