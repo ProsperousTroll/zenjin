@@ -165,6 +165,12 @@ namespace Entity {
             for(int i{0}; i < MAPWIDTH; ++i){
                map[i][MAPHEIGHT - 1].type = GROUND;
             }
+
+            // DONT LOOK
+            map[15][MAPHEIGHT - 4].type = GROUND;
+            map[16][MAPHEIGHT - 4].type = GROUND;
+            map[17][MAPHEIGHT - 4].type = GROUND;
+            map[18][MAPHEIGHT - 4].type = GROUND;
          }
          
          void update(){

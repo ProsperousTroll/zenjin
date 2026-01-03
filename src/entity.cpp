@@ -32,10 +32,11 @@ bool Entity::Player::isOnFloor(){
    // TODO: though it shouldn't be possible, it'd be nice if
    // the player object didn't flip the fuck out if it's outside
    // the map bounds.
-   int cx{(int)(bounds.x)/64};
-   int cy = (int)(bounds.y+128)/64;
-   if(cx >= 0 && cy < MAPHEIGHT && world.map[cx][cy].type == GROUND){
-      bounds.y -= Vector2Distance({bounds.x + 32, bounds.y + 128}, {bounds.x + 32, world.map[cx][cy].bounds.y}) / 4;
+   int cx_l{(int)(bounds.x)/64};
+   int cx_r{(int)(bounds.x+64)/64};
+   int cy{(int)(bounds.y+128)/64};
+   if(( cx_l >= 0 && cy < MAPHEIGHT && world.map[cx_l][cy].type == GROUND ) || ( cx_r >= 0 && cy < MAPHEIGHT && world.map[cx_r][cy].type == GROUND )){
+      bounds.y -= Vector2Distance({bounds.x + 32, bounds.y + 128}, {bounds.x + 32, world.map[cx_l][cy].bounds.y}) / 4;
       return true;
    }
    return false;
@@ -92,8 +93,8 @@ void Entity::Player::update(){
 
    // reset player
    if(IsKeyPressed(KEY_BACKSPACE)){
-      bounds.x = 0;
-      bounds.y = 0;
+      bounds.x = getResolution().x;
+      bounds.y = getResolution().y / 2;
       vel.y = 0;
    }
 }
