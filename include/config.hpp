@@ -12,4 +12,7 @@
 #define DRAWFPS // Optionally draw FPS to the screen.
 
 // Game world settings
-#define MAPSCALE 500 // The sqare of the tile map, meaning the total number of tiles in the map will be the result of multiplying this value by itself.
+#define MAPWIDTH 50
+#define MAPHEIGHT 25
+
+// #define DEBUG // enable player noclip, print current world and pixel coords to console

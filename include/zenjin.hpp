@@ -74,7 +74,6 @@ namespace Entity {
       public:
          Player(){
             bounds = {getResolution().x / 2 - 32, getResolution().y / 2 - 64, 64, 128};
-            //pos = {bounds.x, bounds.y};
          }
 
          Vector2 vel;
@@ -103,7 +102,7 @@ namespace Entity {
       public:
          inline static int count{0};
          int size{64};
-         int tag;
+         int tag; // idek if this is useful anymore
          TileType type;
 
          Tile(){
@@ -113,6 +112,7 @@ namespace Entity {
             ++count;
          }
 
+         // TODO: find it in your heart to delete this useless function
          static std::vector<Tile> createMap(int tileCount){
             std::vector<Tile> map;
             for(int i{0}; i < tileCount; ++i){
@@ -140,9 +140,8 @@ namespace Entity {
          Player plr;
          Camera2D cam;
          Rectangle cullBox;
-         Rectangle collisionBox;
          // std::vector<Tile> tileMap = Tile::createMap(225);
-         Tile map[MAPSCALE][MAPSCALE / 2];
+         Tile map[MAPWIDTH][MAPHEIGHT];
 
          World(){
             init();
@@ -156,27 +155,16 @@ namespace Entity {
             cullBox.width = getResolution().x;
             cullBox.height = getResolution().y;
 
-            collisionBox.width = plr.bounds.width + 64;
-            collisionBox.height = plr.bounds.height + 64;
-
-            for(int i{0}; i < MAPSCALE; ++i){
-               for(int j{0}; j < MAPSCALE / 2; ++j){
+            for(int i{0}; i < MAPWIDTH; ++i){
+               for(int j{0}; j < MAPHEIGHT; ++j){
                   map[i][j].bounds.x = 64 * i;
                   map[i][j].bounds.y = 64 * j;
                }
             }
 
-            for(int i{0}; i < MAPSCALE; ++i){
-               map[i][MAPSCALE / 2 - MAPSCALE / 4].type = GROUND;
+            for(int i{0}; i < MAPWIDTH; ++i){
+               map[i][MAPHEIGHT - 1].type = GROUND;
             }
-
-            /*
-            int i{209};
-            while(i < 224){
-               ++i;
-               tileMap[i].type = GROUND;
-            }
-            */
          }
          
          void update(){
@@ -184,30 +172,18 @@ namespace Entity {
 
             cullBox.x = cam.target.x - getResolution().x / 2;
             cullBox.y = cam.target.y - getResolution().y / 2;
-
-            collisionBox.x = plr.bounds.x - 32;
-            collisionBox.y = plr.bounds.y - 32;
          };
 
          void draw(){
-            // TODO: continue optimizing
-            /*
-            for (auto& tile : tileMap){
-               // only draw what's on screen
-               if(CheckCollisionRecs(cullBox, tile.bounds)){
-                  tile.draw();
-               }
-            }
-            */
-            for(int i{0}; i < MAPSCALE; ++i){
-               for(int j{0}; j < MAPSCALE / 2; ++j){
+            // TODO: optimize this to not loop through every tile ever
+            for(int i{0}; i < MAPWIDTH; ++i){
+               for(int j{0}; j < MAPHEIGHT; ++j){
                   if(CheckCollisionRecs(cullBox, map[i][j].bounds)){
                      map[i][j].draw();
                   }
                }
             }
 
-            DrawRectangleRec(collisionBox, RED);
             plr.draw();
          }
 
@@ -222,8 +198,6 @@ namespace Zenjin{
    inline void Log(const char* input){
       std::cout << input << '\n';
    }
-
-
 
    class Game {
          inline static States::Manager* stateManager{States::Manager::initManager()};
