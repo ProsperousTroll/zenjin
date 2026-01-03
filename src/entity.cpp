@@ -11,28 +11,39 @@ void Entity::Player::move(){
 }
 
 bool Entity::Player::isOnWall(){
-   for(auto& tile : world.tileMap){
-      if(CheckCollisionRecs({bounds.x - 2, bounds.y, bounds.width + 4, bounds.height - 15}, tile.bounds)){
-         if(vel.x > 0){
-            wallDir = 1;
-            vel.x = Clamp(vel.x, -maxSpeed, 0);
-         }
+   // TODO: implement wall/floor logic without for loops.
+   //for(auto& tile : world.tileMap){
+   //   if(CheckCollisionRecs({bounds.x - 2, bounds.y, bounds.width + 4, bounds.height - 15}, tile.bounds)){
+   //      if(vel.x > 0){
+   //         wallDir = 1;
+   //         vel.x = Clamp(vel.x, -maxSpeed, 0);
+   //      }
 
-         if(vel.x < 0){
-            wallDir = -1;
-            vel.x = Clamp(vel.x, 0, maxSpeed);
-         }
-         return true;
-      }
-   }
+   //      if(vel.x < 0){
+   //         wallDir = -1;
+   //         vel.x = Clamp(vel.x, 0, maxSpeed);
+   //      }
+   //      return true;
+   //   }
+   //}
    return false;
 }
 
 bool Entity::Player::isOnFloor(){
+   /*
    for(auto& tile : world.tileMap){
       if(CheckCollisionRecs(bounds, tile.bounds) && tile.type == GROUND){
          bounds.y -= Vector2Distance({bounds.x + 32, bounds.y + 128}, {bounds.x + 32, tile.bounds.y}) / 4;
          return (bounds.x + bounds.y / 2 >= tile.bounds.x) && (bounds.x + bounds.y / 2 <= tile.bounds.x + tile.bounds.y);
+      }
+   }
+   */
+   for(int i{0}; i < MAPSCALE; ++i){
+      for(int j{0}; j < MAPSCALE / 2; ++j){
+         if(CheckCollisionRecs(bounds, world.map[i][j].bounds) && world.map[i][j].type == GROUND){
+            bounds.y -= Vector2Distance({bounds.x + 32, bounds.y + 128}, {bounds.x + 32, world.map[i][j].bounds.y}) / 4;
+            return (bounds.x + bounds.y / 2 >= world.map[i][j].bounds.x) && (bounds.x + bounds.y / 2 <= world.map[i][j].bounds.x + world.map[i][j].bounds.y);
+         }
       }
    }
    return false;

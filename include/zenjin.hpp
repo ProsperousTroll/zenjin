@@ -139,7 +139,10 @@ namespace Entity {
       public:
          Player plr;
          Camera2D cam;
-         std::vector<Tile> tileMap = Tile::createMap(225);
+         Rectangle cullBox;
+         Rectangle collisionBox;
+         // std::vector<Tile> tileMap = Tile::createMap(225);
+         Tile map[MAPSCALE][MAPSCALE / 2];
 
          World(){
             init();
@@ -150,22 +153,61 @@ namespace Entity {
             cam.target = {getResolution().x / 2, getResolution().y / 2};
             cam.offset = {getResolution().x / 2, getResolution().y / 2};
 
+            cullBox.width = getResolution().x;
+            cullBox.height = getResolution().y;
+
+            collisionBox.width = plr.bounds.width + 64;
+            collisionBox.height = plr.bounds.height + 64;
+
+            for(int i{0}; i < MAPSCALE; ++i){
+               for(int j{0}; j < MAPSCALE / 2; ++j){
+                  map[i][j].bounds.x = 64 * i;
+                  map[i][j].bounds.y = 64 * j;
+               }
+            }
+
+            for(int i{0}; i < MAPSCALE; ++i){
+               map[i][MAPSCALE / 2 - MAPSCALE / 4].type = GROUND;
+            }
+
+            /*
             int i{209};
             while(i < 224){
                ++i;
                tileMap[i].type = GROUND;
             }
+            */
          }
          
          void update(){
             plr.update();
+
+            cullBox.x = cam.target.x - getResolution().x / 2;
+            cullBox.y = cam.target.y - getResolution().y / 2;
+
+            collisionBox.x = plr.bounds.x - 32;
+            collisionBox.y = plr.bounds.y - 32;
          };
 
          void draw(){
+            // TODO: continue optimizing
+            /*
             for (auto& tile : tileMap){
-               tile.draw();
+               // only draw what's on screen
+               if(CheckCollisionRecs(cullBox, tile.bounds)){
+                  tile.draw();
+               }
+            }
+            */
+            for(int i{0}; i < MAPSCALE; ++i){
+               for(int j{0}; j < MAPSCALE / 2; ++j){
+                  if(CheckCollisionRecs(cullBox, map[i][j].bounds)){
+                     map[i][j].draw();
+                  }
+               }
             }
 
+            DrawRectangleRec(collisionBox, RED);
             plr.draw();
          }
 
