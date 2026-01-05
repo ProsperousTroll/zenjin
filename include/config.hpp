@@ -12,7 +12,7 @@
 #define DRAWFPS // Optionally draw FPS to the screen.
 
 // Game world settings
-#define MAPWIDTH 60
-#define MAPHEIGHT 15
+#define MAPWIDTH 50 // IMPORTANT: Game will NOT compile with a map size greater than 6000 x 6000
+#define MAPHEIGHT 25
 
 //#define DEBUG // enable player noclip, print current world and pixel coords to console

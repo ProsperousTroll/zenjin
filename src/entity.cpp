@@ -14,21 +14,6 @@ bool Entity::Player::isOnWall(){
 }
 
 bool Entity::Player::isOnFloor(){
-   /*
-    * TODO: find it in your heart to remove this horse shit
-    *
-   for(int i{0}; i < MAPWIDTH; ++i){
-      for(int j{0}; j < MAPHEIGHT; ++j){
-         if(CheckCollisionRecs(bounds, world.map[i][j].bounds) && world.map[i][j].type == GROUND){
-            bounds.y -= Vector2Distance({bounds.x + 32, bounds.y + 128}, {bounds.x + 32, world.map[i][j].bounds.y}) / 4;
-            return (bounds.x + bounds.y / 2 >= world.map[i][j].bounds.x) && (bounds.x + bounds.y / 2 <= world.map[i][j].bounds.x + world.map[i][j].bounds.y);
-         }
-      }
-   }
-   */
-
-   // THIS IS OPTIMIZED AND WORKS GREAT. HOLY FUCK. FINALLY.
-   
    // TODO: though it shouldn't be possible, it'd be nice if
    // the player object didn't flip the fuck out if it's outside
    // the map bounds.
@@ -36,7 +21,7 @@ bool Entity::Player::isOnFloor(){
    int cx_r{(int)(bounds.x+64)/64};
    int cy{(int)(bounds.y+128)/64};
    if(( cx_l >= 0 && cy < MAPHEIGHT && world.map[cx_l][cy].type == GROUND ) || ( cx_r >= 0 && cy < MAPHEIGHT && world.map[cx_r][cy].type == GROUND )){
-      bounds.y -= Vector2Distance({bounds.x + 32, bounds.y + 128}, {bounds.x + 32, world.map[cx_l][cy].bounds.y}) / 4;
+      bounds.y -= Vector2Distance({bounds.x + 32, bounds.y + 128}, {bounds.x + 32, world.map[cx_r][cy].bounds.y}) / 4;
       return true;
    }
    return false;
