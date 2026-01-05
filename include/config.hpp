@@ -12,7 +12,7 @@
 #define DRAWFPS // Optionally draw FPS to the screen.
 
 // Game world settings
-#define MAPWIDTH 50
+#define MAPWIDTH 60
 #define MAPHEIGHT 15
 
-// #define DEBUG // enable player noclip, print current world and pixel coords to console
+//#define DEBUG // enable player noclip, print current world and pixel coords to console

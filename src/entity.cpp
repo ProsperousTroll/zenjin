@@ -52,14 +52,14 @@ void Entity::Player::update(){
     * Noclip, print current tile map and pixel coords.
     */
 
-   int cx = ( bounds.x )/64; 
-   int cy = ( bounds.y+128 )/64;
-   std::cout << "Current location on map - X: " << cx << " Y: " << cy << '\n';
-   std::cout << "Current pixel coords - X: " << bounds.x << " Y: " << bounds.y << '\n';
+   // int cx = ( bounds.x )/64; 
+   // int cy = ( bounds.y+128 )/64;
+   // std::cout << "Current location on map - X: " << cx << " Y: " << cy << '\n';
+   // std::cout << "Current pixel coords - X: " << bounds.x << " Y: " << bounds.y << '\n';
 
    if(inputDir != 0){
       vel.x = inputDir * 1000;
-   }
+   } else vel.x = 0;
 
    if(IsKeyDown(KEY_W)){
       vel.y = -1000;

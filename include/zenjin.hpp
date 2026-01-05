@@ -171,6 +171,12 @@ namespace Entity {
             map[16][MAPHEIGHT - 4].type = GROUND;
             map[17][MAPHEIGHT - 4].type = GROUND;
             map[18][MAPHEIGHT - 4].type = GROUND;
+
+
+            map[24][MAPHEIGHT - 7].type = GROUND;
+            map[25][MAPHEIGHT - 7].type = GROUND;
+            map[26][MAPHEIGHT - 7].type = GROUND;
+            map[27][MAPHEIGHT - 7].type = GROUND;
          }
          
          void update(){
@@ -181,11 +187,16 @@ namespace Entity {
          };
 
          void draw(){
-            // TODO: optimize this to not loop through every tile ever
-            for(int i{0}; i < MAPWIDTH; ++i){
-               for(int j{0}; j < MAPHEIGHT; ++j){
-                  if(CheckCollisionRecs(cullBox, map[i][j].bounds)){
-                     map[i][j].draw();
+            // draw tilemap inside bounds of cullBox
+            int cullW{int(cullBox.width / 64 + 1)};
+            int cullH{int(cullBox.height / 64 + 2)};
+            for(int i{0}; i < cullW; ++i){
+               for(int j{0}; j < cullH; ++j){
+                  int cx{int(cullBox.x / 64) + i};
+                  int cy{int(cullBox.y / 64) + j};
+
+                  if(cx >= 0 && cy >= 0 && cx < MAPWIDTH && cy < MAPHEIGHT){
+                     map[cx][cy].draw();
                   }
                }
             }
