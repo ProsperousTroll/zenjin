@@ -3,11 +3,11 @@
 /// CONFIG ///
 
 // Window / Display settings
-#define RESOLUTION 720 
+#define RESOLUTION 720
 #define WINNAME "Zenjin"
-#define TARGETFPS 144 // Limit the framerate to this target. If framerate is not limited, GPU usage will be very high
+#define TARGETFPS 60 // Limit the framerate to this target. If framerate is not limited, GPU usage will be very high
 //#define VSYNC // Attempt to automatically set the target framerate to the current monitors refresh rate. May not work with multiple monitors, see below option.
-#define MONITOR 0 // if you have multiple monitors, you might have to change this number to match the one you wish to use. Your main monitor SHOULD be 0.
+#define MONITOR 1 // if you have multiple monitors, you might have to change this number to match the one you wish to use. Your main monitor SHOULD be 0.
 
 #define DRAWFPS // Optionally draw FPS to the screen.
 
@@ -15,4 +15,4 @@
 #define MAPWIDTH 50 // IMPORTANT: Game will NOT compile with a map size greater than 6000 x 6000
 #define MAPHEIGHT 25
 
-//#define DEBUG // enable player noclip, print current world and pixel coords to console
+// #define DEBUG // enable player noclip, print current world and pixel coords to console

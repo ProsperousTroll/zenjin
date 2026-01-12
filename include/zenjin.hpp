@@ -82,12 +82,13 @@ namespace Entity {
          float maxSpeed{800};
          float accel{10};
          float friction{15};
-         float jumpPower{-20};
+         float jumpPower{-1500};
          float fallSpeed{1800};
          float gravity{5500};
 
          void move();
          bool isOnFloor();
+         bool isOnCeiling();
          bool isOnWall();
          void update() override;
          void draw() override;
@@ -177,6 +178,12 @@ namespace Entity {
             map[25][MAPHEIGHT - 7].type = GROUND;
             map[26][MAPHEIGHT - 7].type = GROUND;
             map[27][MAPHEIGHT - 7].type = GROUND;
+
+            map[0][MAPHEIGHT - 2].type = GROUND;
+            map[0][MAPHEIGHT - 3].type = GROUND;
+            map[0][MAPHEIGHT - 4].type = GROUND;
+            map[0][MAPHEIGHT - 5].type = GROUND;
+            map[0][MAPHEIGHT - 6].type = GROUND;
          }
          
          void update(){

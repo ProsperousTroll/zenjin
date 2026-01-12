@@ -3,14 +3,24 @@
 #include "raylib.h"
 #include "raymath.h"
 
-void Entity::Player::move(){
-   bounds.x += vel.x * delta;
-   bounds.y += vel.y * delta;
+bool Entity::Player::isOnCeiling(){
+   int cx_l{(int)(bounds.x) / 64};
+   int cx_r{(int)(bounds.x+64) / 64};
+   int cy{(int)(bounds.y)/64};
+   return ( cx_l >= 0 && cy >= 0 && cx_l < MAPWIDTH && cy < MAPHEIGHT && world.map[cx_l][cy].type == GROUND ) || ( cx_r >= 0 && cy >= 0 && cx_r < MAPWIDTH && cy < MAPHEIGHT && world.map[cx_r][cy].type == GROUND );
 }
 
 bool Entity::Player::isOnWall(){
-   // TODO: implement wall/floor logic without for loops.
-   return false;
+   int cy1{(int)(bounds.y) / 64};
+   int cy2{(int)(bounds.y + 64) / 64};
+   int cx_l{(int)(bounds.x) / 64};
+   int cx_r{(int)(bounds.x + 64) / 64};
+   return  (
+      (cx_l >= 0 && cx_l < MAPWIDTH && world.map[cx_l][cy1].type == GROUND) ||
+      (cx_r >= 0 && cx_r < MAPWIDTH && world.map[cx_r][cy1].type == GROUND) ||
+      (cx_l >= 0 && cx_l < MAPWIDTH && world.map[cx_l][cy2].type == GROUND) ||
+      (cx_r >= 0 && cx_r < MAPWIDTH && world.map[cx_r][cy2].type == GROUND) 
+   ); 
 }
 
 bool Entity::Player::isOnFloor(){
@@ -20,11 +30,21 @@ bool Entity::Player::isOnFloor(){
    int cx_l{(int)(bounds.x)/64};
    int cx_r{(int)(bounds.x+64)/64};
    int cy{(int)(bounds.y+128)/64};
-   if(( cx_l >= 0 && cy < MAPHEIGHT && world.map[cx_l][cy].type == GROUND ) || ( cx_r >= 0 && cy < MAPHEIGHT && world.map[cx_r][cy].type == GROUND )){
-      bounds.y -= Vector2Distance({bounds.x + 32, bounds.y + 128}, {bounds.x + 32, world.map[cx_r][cy].bounds.y}) / 4;
+   if(( cx_l >= 0 && cx_l < MAPWIDTH && cy < MAPHEIGHT && world.map[cx_l][cy].type == GROUND ) || ( cx_r > 0 && cx_r < MAPWIDTH && cy < MAPHEIGHT && world.map[cx_r][cy].type == GROUND )){
+      bounds.y -= Vector2Distance({bounds.x + 32, bounds.y + 128}, {bounds.x + 32, world.map[cx_r][cy].bounds.y});
       return true;
    }
    return false;
+}
+
+void Entity::Player::move(){
+   bounds.x += vel.x * delta;
+   bounds.y += vel.y * delta;
+
+   if(isOnCeiling()){
+      vel.y = -vel.y;
+   }
+
 }
 
 void Entity::Player::update(){
@@ -51,19 +71,22 @@ void Entity::Player::update(){
    } else if (IsKeyDown(KEY_S)){
       vel.y = 1000;
    } else vel.y = 0;
+
 #else
+
    //input direction and x movement
    inputDir = IsKeyDown(KEY_D) - IsKeyDown(KEY_A);
    if(inputDir != 0){
-         vel.x = Lerp(vel.x, inputDir * maxSpeed, accel * delta);
+      vel.x = Lerp(vel.x, inputDir * maxSpeed, accel * delta);
    } else vel.x = Lerp(vel.x, 0.0f, friction * delta);
 
    // jumping and gravity
    if(!isOnFloor()){
       vel.y += gravity * delta;
    } else if (isOnFloor() && IsKeyDown(KEY_W)){
-      vel.y = jumpPower * 75;
+      vel.y = jumpPower;
    } else vel.y = 0;
+
 #endif
 
    // camera follow player
